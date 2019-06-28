@@ -13,18 +13,20 @@ import net.gahfy.mvvmposts.model.PostDao
 import net.gahfy.mvvmposts.network.PostApi
 import javax.inject.Inject
 
-class PostListViewModel(private val postDao: PostDao):BaseViewModel(){
+//class PostListViewModel(private val postDao: PostDao) : BaseViewModel() {
+
+class PostListViewModel : BaseViewModel() {
     @Inject
     lateinit var postApi: PostApi
     val postListAdapter: PostListAdapter = PostListAdapter()
 
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
-    val errorMessage:MutableLiveData<Int> = MutableLiveData()
+    val errorMessage: MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadPosts() }
 
     private lateinit var subscription: Disposable
 
-    init{
+    init {
         loadPosts()
     }
 
@@ -33,18 +35,8 @@ class PostListViewModel(private val postDao: PostDao):BaseViewModel(){
         subscription.dispose()
     }
 
-    private fun loadPosts(){
-        subscription = Observable.fromCallable { postDao.all }
-                .concatMap {
-                    dbPostList ->
-                        if(dbPostList.isEmpty())
-                            postApi.getPosts().concatMap {
-                                            apiPostList -> postDao.insertAll(*apiPostList.toTypedArray())
-                                 Observable.just(apiPostList)
-                                       }
-                        else
-                            Observable.just(dbPostList)
-                }
+    private fun loadPosts() {
+        subscription = postApi.getPosts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onRetrievePostListStart() }
@@ -53,22 +45,41 @@ class PostListViewModel(private val postDao: PostDao):BaseViewModel(){
                         { result -> onRetrievePostListSuccess(result) },
                         { onRetrievePostListError() }
                 )
+
+/*        subscription = Observable.fromCallable { postDao.all }
+                .concatMap { dbPostList ->
+                    if (dbPostList.isEmpty())
+                        postApi.getPosts().concatMap { apiPostList ->
+                            postDao.insertAll(*apiPostList.toTypedArray())
+                            Observable.just(apiPostList)
+                        }
+                    else
+                        Observable.just(dbPostList)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { onRetrievePostListStart() }
+                .doOnTerminate { onRetrievePostListFinish() }
+                .subscribe(
+                        { result -> onRetrievePostListSuccess(result) },
+                        { onRetrievePostListError() }
+                )*/
     }
 
-    private fun onRetrievePostListStart(){
+    private fun onRetrievePostListStart() {
         loadingVisibility.value = View.VISIBLE
         errorMessage.value = null
     }
 
-    private fun onRetrievePostListFinish(){
+    private fun onRetrievePostListFinish() {
         loadingVisibility.value = View.GONE
     }
 
-    private fun onRetrievePostListSuccess(postList:List<Post>){
+    private fun onRetrievePostListSuccess(postList: List<Post>) {
         postListAdapter.updatePostList(postList)
     }
 
-    private fun onRetrievePostListError(){
+    private fun onRetrievePostListError() {
         errorMessage.value = R.string.post_error
     }
 }

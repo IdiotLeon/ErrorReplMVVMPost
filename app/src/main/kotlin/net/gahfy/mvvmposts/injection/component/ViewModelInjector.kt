@@ -1,5 +1,6 @@
 package net.gahfy.mvvmposts.injection.component
 
+import android.arch.lifecycle.ViewModel
 import dagger.Component
 import net.gahfy.mvvmposts.injection.module.NetworkModule
 import net.gahfy.mvvmposts.ui.post.PostListViewModel
@@ -12,16 +13,19 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [(NetworkModule::class)])
 interface ViewModelInjector {
+    fun inject(viewModel: ViewModel)
+
     /**
      * Injects required dependencies into the specified PostListViewModel.
      * @param postListViewModel PostListViewModel in which to inject the dependencies
      */
-    fun inject(postListViewModel: PostListViewModel)
+    // fun inject(postListViewModel: PostListViewModel)
+
     /**
      * Injects required dependencies into the specified PostViewModel.
      * @param postViewModel PostViewModel in which to inject the dependencies
      */
-    fun inject(postViewModel: PostViewModel)
+    // fun inject(postViewModel: PostViewModel)
 
     @Component.Builder
     interface Builder {

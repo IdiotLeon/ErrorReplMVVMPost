@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity
 import net.gahfy.mvvmposts.model.database.AppDatabase
 import net.gahfy.mvvmposts.ui.post.PostListViewModel
 
-class ViewModelFactory(private val activity: AppCompatActivity): ViewModelProvider.Factory{
+/*
+class ViewModelFactory(private val activity: AppCompatActivity) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PostListViewModel::class.java)) {
             val db = Room.databaseBuilder(activity.applicationContext, AppDatabase::class.java, "posts").build()
@@ -15,6 +16,5 @@ class ViewModelFactory(private val activity: AppCompatActivity): ViewModelProvid
             return PostListViewModel(db.postDao()) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
-
     }
-}
+}*/

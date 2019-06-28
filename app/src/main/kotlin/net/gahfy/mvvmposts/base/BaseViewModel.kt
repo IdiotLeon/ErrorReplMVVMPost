@@ -21,9 +21,11 @@ abstract class BaseViewModel:ViewModel(){
      * Injects the required dependencies
      */
     private fun inject() {
-        when (this) {
+
+        injector.inject(this)
+/*        when (this) {
             is PostListViewModel -> injector.inject(this)
             is PostViewModel -> injector.inject(this)
-        }
+        }*/
     }
 }
